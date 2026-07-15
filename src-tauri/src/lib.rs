@@ -62,6 +62,21 @@ fn unlock_vault(password: String, state: State<AppState>) -> Result<String, Stri
     Ok(json)
 }
 
+/// Liest eine Textdatei ein (Pfad kommt aus dem Datei-Dialog des Nutzers).
+/// Wird fuer den Import von CSV/vCard genutzt.
+#[tauri::command]
+fn read_text_file(path: String) -> Result<String, String> {
+    std::fs::read_to_string(&path).map_err(|e| format!("Datei konnte nicht gelesen werden: {e}"))
+}
+
+/// Schreibt Text in eine Datei (Pfad kommt aus dem Datei-Dialog des Nutzers).
+/// Wird fuer den Export nach CSV/vCard genutzt.
+#[tauri::command]
+fn write_text_file(path: String, content: String) -> Result<(), String> {
+    std::fs::write(&path, content)
+        .map_err(|e| format!("Datei konnte nicht geschrieben werden: {e}"))
+}
+
 /// Speichert die uebergebenen Kontakte (JSON-Text) verschluesselt.
 #[tauri::command]
 fn save_contacts(data: String, state: State<AppState>) -> Result<(), String> {
@@ -107,6 +122,7 @@ fn change_password(
 pub fn run() {
     tauri::Builder::default()
         .plugin(tauri_plugin_opener::init())
+        .plugin(tauri_plugin_dialog::init())
         .setup(|app| {
             // Speicherort: %APPDATA%\com.adressverwaltung.app\vault.json
             let dir = app
@@ -127,7 +143,9 @@ pub fn run() {
             unlock_vault,
             save_contacts,
             lock_vault,
-            change_password
+            change_password,
+            read_text_file,
+            write_text_file
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

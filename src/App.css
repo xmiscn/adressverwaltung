@@ -162,6 +162,22 @@ body {
   font-size: 13px;
 }
 
+.sidebar-io {
+  display: flex;
+  gap: 8px;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--rahmen);
+}
+
+.sidebar-io .btn-ghost {
+  flex: 1;
+}
+
+.btn-ghost.klein {
+  padding: 5px 10px;
+  font-size: 12px;
+}
+
 .contact-list {
   list-style: none;
   margin: 0;

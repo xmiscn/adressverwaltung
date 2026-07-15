@@ -50,6 +50,13 @@ Vor dem Test ggf. eine bestehende `vault.json` sichern/entfernen
 ### Sperren
 - [ ] „Sperren" führt zurück zum Entsperren-Bildschirm; Daten erst nach Passwort wieder sichtbar.
 
+### Import / Export
+- [ ] „Exportieren" → Dateiname `adressen.csv` → Datei enthält alle Kontakte (in Excel prüfbar, Umlaute korrekt).
+- [ ] „Exportieren" mit Endung `.vcf` → gültige vCard-Datei (in Kontakte-App/Outlook importierbar).
+- [ ] „Importieren" einer zuvor exportierten CSV → Kontakte werden ergänzt (Anzahl stimmt).
+- [ ] „Importieren" einer `.vcf` → Kontakte werden ergänzt.
+- [ ] Import einer Datei ohne passende Spalten/Karten → Meldung „keine Kontakte gefunden".
+
 ## 3. Testprotokoll
 
 | Datum | Version | Tester | Ergebnis | Bemerkung |

@@ -1,7 +1,16 @@
 import { useEffect, useMemo, useState } from "react";
+import { open, save } from "@tauri-apps/plugin-dialog";
 import "./App.css";
 import { Contact, leererKontakt, anzeigename } from "./types";
-import { getStatus, saveContacts, lockVault, changePassword } from "./api";
+import {
+  getStatus,
+  saveContacts,
+  lockVault,
+  changePassword,
+  readTextFile,
+  writeTextFile,
+} from "./api";
+import { toCsv, fromCsv, toVCard, fromVCard } from "./ioFormats";
 import AuthScreen from "./components/AuthScreen";
 import ContactList from "./components/ContactList";
 import ContactDetail from "./components/ContactDetail";
@@ -109,6 +118,53 @@ export default function App() {
     setPhase("unlock");
   }
 
+  async function importieren() {
+    try {
+      const pfad = await open({
+        multiple: false,
+        directory: false,
+        filters: [
+          { name: "Kontakte (CSV, vCard)", extensions: ["csv", "vcf", "vcard"] },
+        ],
+      });
+      if (!pfad || typeof pfad !== "string") return;
+      const text = await readTextFile(pfad);
+      const istVcf = /\.(vcf|vcard)$/i.test(pfad);
+      const importiert = istVcf ? fromVCard(text) : fromCsv(text);
+      if (importiert.length === 0) {
+        setFehler("In der Datei wurden keine Kontakte gefunden.");
+        return;
+      }
+      await persist([...contacts, ...importiert]);
+      window.alert(`${importiert.length} Kontakt(e) importiert.`);
+    } catch (e) {
+      setFehler("Import fehlgeschlagen: " + String(e));
+    }
+  }
+
+  async function exportieren() {
+    if (contacts.length === 0) {
+      setFehler("Es gibt keine Kontakte zum Exportieren.");
+      return;
+    }
+    try {
+      const pfad = await save({
+        defaultPath: "adressen.csv",
+        filters: [
+          { name: "CSV-Tabelle", extensions: ["csv"] },
+          { name: "vCard", extensions: ["vcf"] },
+        ],
+      });
+      if (!pfad) return;
+      const istVcf = /\.(vcf|vcard)$/i.test(pfad);
+      const inhalt = istVcf ? toVCard(contacts) : toCsv(contacts);
+      await writeTextFile(pfad, inhalt);
+      window.alert(`${contacts.length} Kontakt(e) exportiert nach:\n${pfad}`);
+    } catch (e) {
+      setFehler("Export fehlgeschlagen: " + String(e));
+    }
+  }
+
   if (phase === "loading") {
     return <div className="zentriert">Wird geladen…</div>;
   }
@@ -145,6 +201,14 @@ export default function App() {
             <span>{contacts.length} Kontakte</span>
             <button className="btn-primary klein" onClick={neuerKontakt}>
               + Neu
+            </button>
+          </div>
+          <div className="sidebar-io">
+            <button className="btn-ghost klein" onClick={importieren}>
+              Importieren
+            </button>
+            <button className="btn-ghost klein" onClick={exportieren}>
+              Exportieren
             </button>
           </div>
           <ContactList

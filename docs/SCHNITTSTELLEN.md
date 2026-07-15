@@ -52,6 +52,22 @@ Sperrt die Sitzung: entfernt den Schlüssel aus dem Speicher.
 - **Argumente:** `oldPassword: string`, `newPassword: string` (neu: mind. 4 Zeichen)
 - **Rückgabe:** – (Erfolg) / `Err` bei falschem altem oder zu kurzem neuem Passwort
 
+## `read_text_file`
+Liest eine Textdatei ein. Der Pfad stammt aus dem Datei-Dialog (Import CSV/vCard).
+
+- **Argumente:** `path: string`
+- **Rückgabe:** `string` – der Dateiinhalt / `Err` bei Lesefehler
+
+## `write_text_file`
+Schreibt Text in eine Datei. Der Pfad stammt aus dem Datei-Dialog (Export CSV/vCard).
+
+- **Argumente:** `path: string`, `content: string`
+- **Rückgabe:** – (Erfolg) / `Err` bei Schreibfehler
+
+> Im-/Export selbst (Formatumwandlung) findet im Frontend statt
+> ([`src/ioFormats.ts`](../src/ioFormats.ts)); der Datei-Dialog kommt vom
+> Plugin `@tauri-apps/plugin-dialog`.
+
 ---
 
 ## Datenmodell `Contact`

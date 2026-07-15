@@ -1,0 +1,29 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f6fb0"/>
+      <stop offset="1" stop-color="#1e4e8c"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Hintergrund -->
+  <rect x="0" y="0" width="1024" height="1024" rx="200" fill="url(#bg)"/>
+
+  <!-- Adressbuch / Kontaktkarte -->
+  <rect x="300" y="238" width="424" height="548" rx="44" fill="#ffffff"/>
+
+  <!-- Buchbindung links mit Ringen -->
+  <rect x="300" y="238" width="70" height="548" rx="44" fill="#2f6fb0"/>
+  <rect x="336" y="238" width="34" height="548" fill="#2f6fb0"/>
+  <circle cx="335" cy="360" r="16" fill="#ffffff"/>
+  <circle cx="335" cy="512" r="16" fill="#ffffff"/>
+  <circle cx="335" cy="664" r="16" fill="#ffffff"/>
+
+  <!-- Personensymbol -->
+  <circle cx="546" cy="430" r="70" fill="#1e4e8c"/>
+  <path d="M546 520 c -80 0 -128 58 -128 138 l 256 0 c 0 -80 -48 -138 -128 -138 z" fill="#1e4e8c"/>
+
+  <!-- Kontaktzeilen -->
+  <rect x="452" y="694" width="188" height="18" rx="9" fill="#d3ddea"/>
+  <rect x="452" y="736" width="140" height="18" rx="9" fill="#d3ddea"/>
+</svg>

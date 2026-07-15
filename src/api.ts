@@ -34,3 +34,13 @@ export function changePassword(
 ): Promise<void> {
   return invoke<void>("change_password", { oldPassword, newPassword });
 }
+
+/** Liest eine vom Nutzer gewählte Textdatei (Import). */
+export function readTextFile(path: string): Promise<string> {
+  return invoke<string>("read_text_file", { path });
+}
+
+/** Schreibt Text in eine vom Nutzer gewählte Datei (Export). */
+export function writeTextFile(path: string, content: string): Promise<void> {
+  return invoke<void>("write_text_file", { path, content });
+}

@@ -66,3 +66,4 @@ winget upgrade OpenJS.NodeJS.LTS
 | Version | Datum | Änderung |
 |---|---|---|
 | 0.1.0 | 2026-07-15 | Erstversion: verschlüsselte Kontaktverwaltung |
+| 0.2.0 | 2026-07-15 | Import/Export (CSV/vCard), eigenes App-Icon, Code-Signing-Anleitung |
