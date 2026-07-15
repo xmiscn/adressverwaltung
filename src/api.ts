@@ -1,0 +1,36 @@
+// Duenne Schnittstelle zu den Rust-Befehlen (Tauri `invoke`).
+
+import { invoke } from "@tauri-apps/api/core";
+
+export interface VaultStatus {
+  initialized: boolean;
+  unlocked: boolean;
+}
+
+export function getStatus(): Promise<VaultStatus> {
+  return invoke<VaultStatus>("vault_status");
+}
+
+export function initializeVault(password: string): Promise<void> {
+  return invoke<void>("initialize_vault", { password });
+}
+
+/** Entsperrt den Tresor und liefert die Kontakte als JSON-Text zurueck. */
+export function unlockVault(password: string): Promise<string> {
+  return invoke<string>("unlock_vault", { password });
+}
+
+export function saveContacts(data: string): Promise<void> {
+  return invoke<void>("save_contacts", { data });
+}
+
+export function lockVault(): Promise<void> {
+  return invoke<void>("lock_vault");
+}
+
+export function changePassword(
+  oldPassword: string,
+  newPassword: string,
+): Promise<void> {
+  return invoke<void>("change_password", { oldPassword, newPassword });
+}

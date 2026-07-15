@@ -1,0 +1,430 @@
+/* Adressverwaltung – konservatives Design in Weiß/Blau */
+
+:root {
+  --blau-900: #12335c;
+  --blau-700: #1e4e8c;
+  --blau-500: #2f6fb0;
+  --blau-100: #e8f0fa;
+  --blau-050: #f4f8fd;
+  --rahmen: #d3ddea;
+  --text: #1f2d3d;
+  --text-schwach: #5b6b7e;
+  --weiss: #ffffff;
+  --rot: #b3261e;
+  --rot-hell: #fbeceb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+  color: var(--text);
+  background: var(--blau-050);
+  font-size: 14px;
+}
+
+.zentriert {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--text-schwach);
+}
+
+/* ---------- Anmeldung / Einrichtung ---------- */
+
+.auth-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  background: linear-gradient(160deg, var(--blau-700), var(--blau-900));
+  padding: 24px;
+}
+
+.auth-card {
+  background: var(--weiss);
+  width: 100%;
+  max-width: 380px;
+  padding: 32px;
+  border-radius: 10px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-logo {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--blau-700);
+  text-align: center;
+}
+
+.auth-hint {
+  margin: 0;
+  color: var(--text-schwach);
+  line-height: 1.5;
+  font-size: 13px;
+}
+
+.auth-fehler {
+  background: var(--rot-hell);
+  color: var(--rot);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+/* ---------- Grundlayout ---------- */
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--blau-700);
+  color: var(--weiss);
+  padding: 0 16px;
+  height: 52px;
+  flex-shrink: 0;
+}
+
+.marke {
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.2px;
+}
+
+.suche {
+  flex: 1;
+  max-width: 360px;
+  height: 34px;
+  border: none;
+  border-radius: 6px;
+  padding: 0 12px;
+  font-size: 14px;
+}
+
+.topbar-aktionen {
+  margin-left: auto;
+  display: flex;
+  gap: 8px;
+}
+
+.fehlerband {
+  background: var(--rot-hell);
+  color: var(--rot);
+  padding: 8px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid #f0cfcc;
+}
+
+.layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+}
+
+/* ---------- Seitenleiste ---------- */
+
+.sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  background: var(--weiss);
+  border-right: 1px solid var(--rahmen);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sidebar-kopf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--rahmen);
+  color: var(--text-schwach);
+  font-size: 13px;
+}
+
+.contact-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.contact-item {
+  padding: 10px 14px;
+  border-bottom: 1px solid #eef2f7;
+  cursor: pointer;
+}
+
+.contact-item:hover {
+  background: var(--blau-050);
+}
+
+.contact-item.aktiv {
+  background: var(--blau-100);
+  border-left: 3px solid var(--blau-500);
+  padding-left: 11px;
+}
+
+.ci-name {
+  font-weight: 600;
+}
+
+.ci-sub {
+  color: var(--text-schwach);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.list-leer {
+  padding: 20px 14px;
+  color: var(--text-schwach);
+  font-size: 13px;
+}
+
+/* ---------- Hauptbereich ---------- */
+
+.hauptbereich {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.platzhalter {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-schwach);
+  text-align: center;
+  line-height: 1.7;
+}
+
+.detail {
+  background: var(--weiss);
+  border: 1px solid var(--rahmen);
+  border-radius: 10px;
+  padding: 22px 24px;
+  max-width: 720px;
+}
+
+.detail-kopf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid var(--rahmen);
+  padding-bottom: 14px;
+  margin-bottom: 18px;
+}
+
+.detail-kopf h2 {
+  margin: 0;
+  color: var(--blau-900);
+  font-size: 19px;
+}
+
+.detail-aktionen {
+  display: flex;
+  gap: 8px;
+}
+
+/* Detail-Ansicht (nur Lesen) */
+
+.detail-view {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.dv-zeile {
+  display: grid;
+  grid-template-columns: 130px 1fr;
+  gap: 12px;
+}
+
+.dv-label {
+  color: var(--text-schwach);
+  font-size: 13px;
+}
+
+.dv-wert {
+  color: var(--text);
+}
+
+/* Formular */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px 16px;
+}
+
+.feld {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 13px;
+}
+
+.feld > span {
+  color: var(--text-schwach);
+}
+
+.feld-breit {
+  grid-column: 1 / -1;
+}
+
+.feld input,
+.feld select,
+.feld textarea {
+  border: 1px solid var(--rahmen);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-family: inherit;
+  color: var(--text);
+  background: var(--weiss);
+}
+
+.feld input:focus,
+.feld select:focus,
+.feld textarea:focus {
+  outline: none;
+  border-color: var(--blau-500);
+  box-shadow: 0 0 0 3px rgba(47, 111, 176, 0.15);
+}
+
+.feld textarea {
+  resize: vertical;
+}
+
+/* ---------- Buttons ---------- */
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-primary {
+  background: var(--blau-700);
+  color: var(--weiss);
+  border: 1px solid var(--blau-700);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-primary:hover {
+  background: var(--blau-500);
+  border-color: var(--blau-500);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.btn-primary.klein {
+  padding: 5px 12px;
+  font-size: 13px;
+}
+
+.btn-ghost {
+  background: var(--weiss);
+  color: var(--blau-700);
+  border: 1px solid var(--rahmen);
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.btn-ghost:hover {
+  background: var(--blau-050);
+}
+
+.btn-ghost-hell {
+  background: rgba(255, 255, 255, 0.12);
+  color: var(--weiss);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+.btn-ghost-hell:hover {
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.btn-danger {
+  background: var(--weiss);
+  color: var(--rot);
+  border: 1px solid #e6bcb9;
+  border-radius: 6px;
+  padding: 8px 16px;
+  font-size: 14px;
+}
+
+.btn-danger:hover {
+  background: var(--rot-hell);
+}
+
+/* ---------- Modal ---------- */
+
+.modal-hintergrund {
+  position: fixed;
+  inset: 0;
+  background: rgba(18, 51, 92, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+}
+
+.modal {
+  background: var(--weiss);
+  border-radius: 10px;
+  padding: 24px;
+  width: 100%;
+  max-width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal h2 {
+  margin: 0;
+  color: var(--blau-900);
+  font-size: 18px;
+}
+
+.modal-aktionen {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+}
