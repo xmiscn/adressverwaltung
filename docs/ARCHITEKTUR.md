@@ -36,8 +36,15 @@ Alle Daten liegen verschlüsselt lokal auf dem Rechner.
 - **`components/ContactList.tsx`** – Liste in der Seitenleiste (gefiltert/sortiert).
 - **`components/ContactDetail.tsx`** – Nur-Lesen-Ansicht eines Kontakts.
 - **`components/ContactForm.tsx`** – Anlegen/Bearbeiten.
+- **`components/BirthdayPanel.tsx`** – „Nächste Geburtstage" auf dem Startbildschirm.
 - **`types.ts`** – Datenmodell `Contact` + Hilfsfunktionen.
 - **`api.ts`** – dünne Hülle um die Tauri-Befehle (die einzige Stelle mit `invoke`).
+- **`contactsView.ts`** – reine, getestete Sicht-Logik: Sortierung, Kategorien, nächste Geburtstage.
+- **`phone.ts`** – Telefon-Validierung/-Formatierung via `libphonenumber-js` („+"-Pflicht, Speicherung als E.164).
+- **`ioFormats.ts`** – CSV-/vCard-Umwandlung für Im-/Export.
+
+Tests: reine Logik-Module (`contactsView`, `phone`) sind mit **Vitest** abgedeckt
+(`*.test.ts`), Ausführung über `npm test`.
 
 ### Backend (`src-tauri/src/`)
 - **`lib.rs`** – definiert die Tauri-Befehle (siehe [SCHNITTSTELLEN.md](SCHNITTSTELLEN.md))

@@ -82,7 +82,9 @@ von Objekten mit folgenden Feldern (alle Strings, definiert in [`src/types.ts`](
 | `vorname`, `nachname` | Name |
 | `firma` | Firmenname |
 | `strasse`, `plz`, `ort`, `land` | Adresse |
-| `email`, `telefon`, `mobil` | Kontaktkanäle |
+| `website` | Webseite (URL) |
+| `email`, `email2` | zwei E-Mail-Adressen |
+| `telefon`, `mobil` | Telefonnummern, gespeichert als E.164 (`+…`) |
 | `geburtstag` | ISO-Datum (`YYYY-MM-DD`) |
 | `kategorie` | frei / Vorschläge: Familie, Freunde, Geschäftlich, Sonstige |
 | `notizen` | Freitext |

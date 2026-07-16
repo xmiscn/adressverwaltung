@@ -9,6 +9,11 @@ Konservatives Design in Weiß/Blau, vollständig offline, **verschlüsselte** lo
   verschlüsselt (Schlüssel via Argon2id).
 - **Eigenständig:** native App (Tauri), kein Server, keine Internetverbindung nötig.
 - **Einfach:** Kontakte anlegen, bearbeiten, löschen, durchsuchen.
+- **Organisieren:** Sortieren nach Name, Kategorie oder Änderungsdatum,
+  Gruppierung und Kategorie-Filter.
+- **Geburtstage:** Der Startbildschirm zeigt die nächsten anstehenden Geburtstage.
+- **Reiche Kontaktdaten:** Website, zwei E-Mail-Adressen, klickbare Aktionen
+  (E-Mail, Anruf, Karte); Telefonnummern im internationalen Format (`+…`).
 - **Import/Export:** CSV (Excel-freundlich) und vCard (.vcf) für Adressbücher/Smartphones.
 
 ## Technologie
