@@ -380,6 +380,37 @@ body {
   color: var(--text);
 }
 
+.dv-link {
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: var(--blau-500);
+  cursor: pointer;
+  text-align: left;
+}
+
+.dv-link:hover {
+  text-decoration: underline;
+}
+
+.dv-klein {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 12px;
+}
+
+.feld input.feld-fehler {
+  border-color: var(--rot);
+  box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.12);
+}
+
+.feld-hinweis {
+  color: var(--rot);
+  font-size: 12px;
+}
+
 /* Formular */
 
 .form-grid {

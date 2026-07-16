@@ -59,6 +59,14 @@ Vor dem Test ggf. eine bestehende `vault.json` sichern/entfernen
 - [ ] Klick auf einen Geburtstag öffnet den Kontakt.
 - [ ] Kontakte ohne Geburtsdatum tauchen nicht im Panel auf.
 
+### Kontakte anreichern (Sprint 2)
+- [ ] Website, E-Mail, E-Mail 2 in der Detailansicht öffnen das jeweilige Programm.
+- [ ] Telefon/Mobil sind klickbar (Anruf) und werden lesbar gruppiert angezeigt.
+- [ ] „Auf Karte anzeigen" öffnet die Adresse im Kartendienst.
+- [ ] Telefonnummer ohne führendes „+" → Speichern wird blockiert, Hinweis erscheint.
+- [ ] Gültige Nummer wird beim Verlassen des Feldes lesbar formatiert.
+- [ ] Import/Export nimmt Website und E-Mail 2 korrekt mit.
+
 ### Import / Export
 - [ ] „Exportieren" → Dateiname `adressen.csv` → Datei enthält alle Kontakte (in Excel prüfbar, Umlaute korrekt).
 - [ ] „Exportieren" mit Endung `.vcf` → gültige vCard-Datei (in Kontakte-App/Outlook importierbar).

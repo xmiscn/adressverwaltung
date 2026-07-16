@@ -2,6 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { Contact } from "../types";
+import { validatePhone, formatPhone } from "../phone";
 
 interface Props {
   contact: Contact;
@@ -10,16 +11,50 @@ interface Props {
   onCancel: () => void;
 }
 
+type TelFeld = "telefon" | "mobil";
+
 export default function ContactForm({ contact, istNeu, onSave, onCancel }: Props) {
   const [entwurf, setEntwurf] = useState<Contact>(contact);
+  const [telFehler, setTelFehler] = useState<Record<TelFeld, string>>({
+    telefon: "",
+    mobil: "",
+  });
 
   function setze<K extends keyof Contact>(feld: K, wert: Contact[K]) {
     setEntwurf((e) => ({ ...e, [feld]: wert }));
   }
 
+  // Beim Verlassen eines Telefonfelds: bei Gültigkeit lesbar formatieren, sonst Fehler zeigen.
+  function telBlur(feld: TelFeld) {
+    const r = validatePhone(entwurf[feld]);
+    if (r.ok) {
+      setze(feld, formatPhone(r.e164) as Contact[TelFeld]);
+      setTelFehler((f) => ({ ...f, [feld]: "" }));
+    } else {
+      setTelFehler((f) => ({ ...f, [feld]: r.error ?? "Ungültig." }));
+    }
+  }
+
   function absenden(e: FormEvent) {
     e.preventDefault();
-    onSave({ ...entwurf, geaendertAm: new Date().toISOString() });
+
+    // Telefonnummern erzwingen: ungültige blockieren das Speichern.
+    const tel = validatePhone(entwurf.telefon);
+    const mob = validatePhone(entwurf.mobil);
+    if (!tel.ok || !mob.ok) {
+      setTelFehler({
+        telefon: tel.ok ? "" : (tel.error ?? "Ungültig."),
+        mobil: mob.ok ? "" : (mob.error ?? "Ungültig."),
+      });
+      return;
+    }
+
+    onSave({
+      ...entwurf,
+      telefon: tel.e164,
+      mobil: mob.e164,
+      geaendertAm: new Date().toISOString(),
+    });
   }
 
   return (
@@ -96,6 +131,16 @@ export default function ContactForm({ contact, istNeu, onSave, onCancel }: Props
         </label>
 
         <label className="feld feld-breit">
+          <span>Website</span>
+          <input
+            type="url"
+            placeholder="https://…"
+            value={entwurf.website}
+            onChange={(e) => setze("website", e.target.value)}
+          />
+        </label>
+
+        <label className="feld feld-breit">
           <span>E-Mail</span>
           <input
             type="email"
@@ -104,13 +149,36 @@ export default function ContactForm({ contact, istNeu, onSave, onCancel }: Props
           />
         </label>
 
+        <label className="feld feld-breit">
+          <span>E-Mail 2</span>
+          <input
+            type="email"
+            value={entwurf.email2}
+            onChange={(e) => setze("email2", e.target.value)}
+          />
+        </label>
+
         <label className="feld">
           <span>Telefon</span>
-          <input value={entwurf.telefon} onChange={(e) => setze("telefon", e.target.value)} />
+          <input
+            value={entwurf.telefon}
+            placeholder="+41 …"
+            onChange={(e) => setze("telefon", e.target.value)}
+            onBlur={() => telBlur("telefon")}
+            className={telFehler.telefon ? "feld-fehler" : ""}
+          />
+          {telFehler.telefon && <small className="feld-hinweis">{telFehler.telefon}</small>}
         </label>
         <label className="feld">
           <span>Mobil</span>
-          <input value={entwurf.mobil} onChange={(e) => setze("mobil", e.target.value)} />
+          <input
+            value={entwurf.mobil}
+            placeholder="+41 …"
+            onChange={(e) => setze("mobil", e.target.value)}
+            onBlur={() => telBlur("mobil")}
+            className={telFehler.mobil ? "feld-fehler" : ""}
+          />
+          {telFehler.mobil && <small className="feld-hinweis">{telFehler.mobil}</small>}
         </label>
 
         <label className="feld">

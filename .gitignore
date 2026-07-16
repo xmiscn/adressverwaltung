@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Generierte Testdaten (per scripts/gen-testdaten.mjs reproduzierbar)
+testdaten
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

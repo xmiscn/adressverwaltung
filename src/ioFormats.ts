@@ -13,7 +13,9 @@ const CSV_SPALTEN: { feld: keyof Contact; titel: string }[] = [
   { feld: "plz", titel: "PLZ" },
   { feld: "ort", titel: "Ort" },
   { feld: "land", titel: "Land" },
+  { feld: "website", titel: "Website" },
   { feld: "email", titel: "E-Mail" },
+  { feld: "email2", titel: "E-Mail 2" },
   { feld: "telefon", titel: "Telefon" },
   { feld: "mobil", titel: "Mobil" },
   { feld: "geburtstag", titel: "Geburtstag" },
@@ -37,9 +39,16 @@ const CSV_ALIASE: Record<string, keyof Contact> = {
   ort: "ort",
   stadt: "ort",
   land: "land",
+  website: "website",
+  webseite: "website",
+  homepage: "website",
+  url: "website",
   email: "email",
   "e-mail": "email",
   mail: "email",
+  "email 2": "email2",
+  "e-mail 2": "email2",
+  email2: "email2",
   telefon: "telefon",
   tel: "telefon",
   mobil: "mobil",
@@ -193,7 +202,9 @@ export function toVCard(contacts: Contact[]): string {
               k.plz,
             )};${vEscape(k.land)}`
           : "",
+        k.website ? `URL:${vEscape(k.website)}` : "",
         k.email ? `EMAIL;TYPE=INTERNET:${vEscape(k.email)}` : "",
+        k.email2 ? `EMAIL;TYPE=INTERNET:${vEscape(k.email2)}` : "",
         k.telefon ? `TEL;TYPE=VOICE:${vEscape(k.telefon)}` : "",
         k.mobil ? `TEL;TYPE=CELL:${vEscape(k.mobil)}` : "",
         vZeile("BDAY", k.geburtstag),
@@ -300,6 +311,11 @@ export function fromVCard(text: string): Contact[] {
       }
       case "EMAIL": {
         if (!aktuell.email) aktuell.email = vUnescape(wert);
+        else if (!aktuell.email2) aktuell.email2 = vUnescape(wert);
+        break;
+      }
+      case "URL": {
+        if (!aktuell.website) aktuell.website = vUnescape(wert);
         break;
       }
       case "TEL": {

@@ -10,7 +10,9 @@ export interface Contact {
   plz: string;
   ort: string;
   land: string;
+  website: string;
   email: string;
+  email2: string;
   telefon: string;
   mobil: string;
   geburtstag: string;
@@ -32,7 +34,9 @@ export function leererKontakt(): Contact {
     plz: "",
     ort: "",
     land: "",
+    website: "",
     email: "",
+    email2: "",
     telefon: "",
     mobil: "",
     geburtstag: "",
