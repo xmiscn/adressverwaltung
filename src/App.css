@@ -108,6 +108,16 @@ body {
   font-weight: 700;
   font-size: 16px;
   letter-spacing: 0.2px;
+  background: none;
+  border: none;
+  color: var(--weiss);
+  font-family: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+
+.marke:hover {
+  opacity: 0.85;
 }
 
 .suche {
@@ -150,6 +160,30 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 0;
+}
+
+.uebersicht-btn {
+  display: block;
+  width: 100%;
+  text-align: left;
+  padding: 10px 14px;
+  border: none;
+  border-bottom: 1px solid var(--rahmen);
+  background: var(--blau-050);
+  color: var(--blau-700);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.uebersicht-btn:hover:not(:disabled) {
+  background: var(--blau-100);
+}
+
+.uebersicht-btn:disabled {
+  color: var(--text-schwach);
+  background: var(--weiss);
+  cursor: default;
 }
 
 .sidebar-kopf {

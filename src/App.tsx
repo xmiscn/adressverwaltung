@@ -97,6 +97,13 @@ export default function App() {
     }
   }
 
+  // Zurück zum Startbildschirm (Geburtstags-Panel): Auswahl/Bearbeitung aufheben.
+  function zurStartseite() {
+    setSelectedId(null);
+    setEditMode("none");
+    setEntwurf(null);
+  }
+
   async function speichern(k: Contact) {
     if (editMode === "new") {
       await persist([...contacts, k]);
@@ -185,7 +192,13 @@ export default function App() {
   return (
     <div className="app">
       <header className="topbar">
-        <div className="marke">ADR-Tresor</div>
+        <button
+          className="marke"
+          onClick={zurStartseite}
+          title="Zur Übersicht"
+        >
+          ADR-Tresor
+        </button>
         <input
           className="suche"
           type="search"
@@ -207,6 +220,13 @@ export default function App() {
 
       <div className="layout">
         <aside className="sidebar">
+          <button
+            className="uebersicht-btn"
+            onClick={zurStartseite}
+            disabled={!ausgewaehlt && editMode === "none"}
+          >
+            ⌂ Übersicht &amp; Geburtstage
+          </button>
           <div className="sidebar-kopf">
             <span>{contacts.length} Kontakte</span>
             <button className="btn-primary klein" onClick={neuerKontakt}>

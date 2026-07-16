@@ -67,3 +67,4 @@ winget upgrade OpenJS.NodeJS.LTS
 |---|---|---|
 | 0.1.0 | 2026-07-15 | Erstversion: verschlüsselte Kontaktverwaltung |
 | 0.2.0 | 2026-07-15 | Import/Export (CSV/vCard), eigenes App-Icon, Code-Signing-Anleitung |
+| 0.3.0 | 2026-07-16 | Umbenennung ADR-Tresor; Sortieren/Gruppieren/Kategorie-Filter; nächste Geburtstage; Website + 2. E-Mail; klickbare Aktionen; Telefon-Pflichtformat; Übersicht-Button |
