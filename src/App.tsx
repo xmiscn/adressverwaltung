@@ -11,10 +11,17 @@ import {
   writeTextFile,
 } from "./api";
 import { toCsv, fromCsv, toVCard, fromVCard } from "./ioFormats";
+import {
+  sortContacts,
+  filterByCategory,
+  distinctCategories,
+  SortMode,
+} from "./contactsView";
 import AuthScreen from "./components/AuthScreen";
 import ContactList from "./components/ContactList";
 import ContactDetail from "./components/ContactDetail";
 import ContactForm from "./components/ContactForm";
+import BirthdayPanel from "./components/BirthdayPanel";
 
 type Phase = "loading" | "setup" | "unlock" | "ready";
 type EditMode = "none" | "new" | "edit";
@@ -24,6 +31,8 @@ export default function App() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [suche, setSuche] = useState("");
+  const [sortMode, setSortMode] = useState<SortMode>("name");
+  const [kategorieFilter, setKategorieFilter] = useState("");
   const [editMode, setEditMode] = useState<EditMode>("none");
   const [entwurf, setEntwurf] = useState<Contact | null>(null);
   const [fehler, setFehler] = useState("");
@@ -59,7 +68,7 @@ export default function App() {
 
   const gefiltert = useMemo(() => {
     const q = suche.trim().toLowerCase();
-    const liste = q
+    let liste = q
       ? contacts.filter((k) =>
           [k.vorname, k.nachname, k.firma, k.email, k.ort, k.kategorie]
             .join(" ")
@@ -67,10 +76,11 @@ export default function App() {
             .includes(q),
         )
       : contacts;
-    return [...liste].sort((a, b) =>
-      anzeigename(a).localeCompare(anzeigename(b), "de"),
-    );
-  }, [contacts, suche]);
+    liste = filterByCategory(liste, kategorieFilter);
+    return sortContacts(liste, sortMode);
+  }, [contacts, suche, kategorieFilter, sortMode]);
+
+  const kategorien = useMemo(() => distinctCategories(contacts), [contacts]);
 
   const ausgewaehlt = contacts.find((k) => k.id === selectedId) ?? null;
 
@@ -211,6 +221,33 @@ export default function App() {
               Exportieren
             </button>
           </div>
+          <div className="sidebar-controls">
+            <label>
+              <span>Sortieren</span>
+              <select
+                value={sortMode}
+                onChange={(e) => setSortMode(e.target.value as SortMode)}
+              >
+                <option value="name">Name (A–Z)</option>
+                <option value="kategorie">Kategorie</option>
+                <option value="geaendert">Zuletzt geändert</option>
+              </select>
+            </label>
+            <label>
+              <span>Kategorie</span>
+              <select
+                value={kategorieFilter}
+                onChange={(e) => setKategorieFilter(e.target.value)}
+              >
+                <option value="">Alle</option>
+                {kategorien.map((kat) => (
+                  <option key={kat} value={kat}>
+                    {kat}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
           <ContactList
             contacts={gefiltert}
             selectedId={selectedId}
@@ -218,6 +255,7 @@ export default function App() {
               setSelectedId(id);
               setEditMode("none");
             }}
+            groupByCategory={sortMode === "kategorie"}
           />
         </aside>
 
@@ -239,9 +277,18 @@ export default function App() {
               onDelete={() => loeschen(ausgewaehlt.id)}
             />
           ) : (
-            <div className="platzhalter">
-              <p>Wählen Sie links einen Kontakt aus</p>
-              <p>oder legen Sie mit „+ Neu" einen neuen an.</p>
+            <div className="startbereich">
+              <BirthdayPanel
+                contacts={contacts}
+                onSelect={(id) => {
+                  setSelectedId(id);
+                  setEditMode("none");
+                }}
+              />
+              <div className="platzhalter">
+                <p>Wählen Sie links einen Kontakt aus</p>
+                <p>oder legen Sie mit „+ Neu" einen neuen an.</p>
+              </div>
             </div>
           )}
         </main>

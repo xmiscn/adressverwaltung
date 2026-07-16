@@ -50,6 +50,15 @@ Vor dem Test ggf. eine bestehende `vault.json` sichern/entfernen
 ### Sperren
 - [ ] „Sperren" führt zurück zum Entsperren-Bildschirm; Daten erst nach Passwort wieder sichtbar.
 
+### Sortieren & Geburtstage (Sprint 1)
+- [ ] Sortierung „Name (A–Z)" ordnet alphabetisch.
+- [ ] Sortierung „Zuletzt geändert" zeigt gerade bearbeitete Kontakte oben.
+- [ ] Sortierung „Kategorie" zeigt Gruppen-Überschriften; „Ohne Kategorie" zuletzt.
+- [ ] Kategorie-Filter reduziert die Liste; „Alle" zeigt wieder alles.
+- [ ] Startbildschirm zeigt „Nächste Geburtstage" (max. 3), korrekt sortiert nach Tagen.
+- [ ] Klick auf einen Geburtstag öffnet den Kontakt.
+- [ ] Kontakte ohne Geburtsdatum tauchen nicht im Panel auf.
+
 ### Import / Export
 - [ ] „Exportieren" → Dateiname `adressen.csv` → Datei enthält alle Kontakte (in Excel prüfbar, Umlaute korrekt).
 - [ ] „Exportieren" mit Endung `.vcf` → gültige vCard-Datei (in Kontakte-App/Outlook importierbar).
