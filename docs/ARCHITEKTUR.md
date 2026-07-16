@@ -1,8 +1,8 @@
-# Architektur – Adressverwaltung
+# Architektur – ADR-Tresor
 
 ## Überblick
 
-Die Adressverwaltung ist eine **eigenständige Windows-Desktop-App** (Tauri 2).
+ADR-Tresor ist eine **eigenständige Windows-Desktop-App** (Tauri 2).
 Sie läuft vollständig offline; es gibt keinen Server und keine Netzwerkverbindung.
 Alle Daten liegen verschlüsselt lokal auf dem Rechner.
 

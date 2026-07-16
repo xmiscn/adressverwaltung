@@ -1,4 +1,4 @@
-# Schnittstellen (IPC) – Adressverwaltung
+# Schnittstellen (IPC) – ADR-Tresor
 
 Die einzige Schnittstelle zwischen Frontend und Backend sind die **Tauri-Befehle**.
 Das Frontend ruft sie über `invoke("<name>", args)` auf (gekapselt in [`src/api.ts`](../src/api.ts)),

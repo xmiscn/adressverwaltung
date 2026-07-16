@@ -1,6 +1,7 @@
-# Adressverwaltung
+# ADR-Tresor
 
-Eine eigenständige Windows-Desktop-App zur Verwaltung von Adressen und Kontakten.
+Eine eigenständige Windows-Desktop-App zur Verwaltung von Adressen und Kontakten
+(vormals „Adressverwaltung"). *ADR* für Adresse, *Tresor* für die verschlüsselte Ablage.
 Konservatives Design in Weiß/Blau, vollständig offline, **verschlüsselte** lokale Datenhaltung.
 
 ## Merkmale

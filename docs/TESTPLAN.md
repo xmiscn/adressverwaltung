@@ -1,4 +1,4 @@
-# Testplan – Adressverwaltung
+# Testplan – ADR-Tresor
 
 ## 1. Automatisierte Tests
 

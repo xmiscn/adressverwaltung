@@ -52,7 +52,7 @@ export default function AuthScreen({ mode, onUnlocked }: Props) {
   return (
     <div className="auth-wrap">
       <form className="auth-card" onSubmit={absenden}>
-        <div className="auth-logo">Adressverwaltung</div>
+        <div className="auth-logo">ADR-Tresor</div>
         <p className="auth-hint">
           {mode === "setup"
             ? "Vergeben Sie ein Master-Passwort. Damit werden Ihre Adressen verschlüsselt. Ohne dieses Passwort sind die Daten nicht lesbar – es kann nicht zurückgesetzt werden."
