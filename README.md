@@ -15,6 +15,9 @@ Konservatives Design in Weiß/Blau, vollständig offline, **verschlüsselte** lo
 - **Reiche Kontaktdaten:** Website, zwei E-Mail-Adressen, klickbare Aktionen
   (E-Mail, Anruf, Karte); Telefonnummern im internationalen Format (`+…`).
 - **Import/Export:** CSV (Excel-freundlich) und vCard (.vcf) für Adressbücher/Smartphones.
+- **Sicherung:** rollierendes Auto-Backup (letzte 5) plus manuelles Sichern/Wiederherstellen.
+- **Einstellungen (⚙):** Auto-Sperre, Speicherort, Telefon-Darstellung, CSV-Trennzeichen,
+  Standard-Sortierung — gebündelt an einem Ort.
 
 ## Technologie
 - **Frontend:** React + TypeScript (Vite)

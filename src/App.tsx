@@ -12,7 +12,12 @@ import {
   backupVault,
   restoreVault,
 } from "./api";
-import { getAutoLockMinuten } from "./settings";
+import {
+  ladeEinstellungen,
+  speichereEinstellungen,
+  Einstellungen,
+} from "./settings";
+import SettingsDialog from "./components/SettingsDialog";
 import { toCsv, fromCsv, toVCard, fromVCard } from "./ioFormats";
 import {
   sortContacts,
@@ -34,12 +39,24 @@ export default function App() {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [suche, setSuche] = useState("");
-  const [sortMode, setSortMode] = useState<SortMode>("name");
+  const [einstellungen, setEinstellungen] = useState<Einstellungen>(() =>
+    ladeEinstellungen(),
+  );
+  const [sortMode, setSortMode] = useState<SortMode>(
+    einstellungen.standardSortierung,
+  );
   const [kategorieFilter, setKategorieFilter] = useState("");
   const [editMode, setEditMode] = useState<EditMode>("none");
   const [entwurf, setEntwurf] = useState<Contact | null>(null);
   const [fehler, setFehler] = useState("");
   const [pwDialog, setPwDialog] = useState(false);
+  const [settingsOffen, setSettingsOffen] = useState(false);
+
+  // Einstellung ändern: sofort übernehmen und dauerhaft merken.
+  function aendereEinstellungen(neu: Einstellungen) {
+    setEinstellungen(neu);
+    speichereEinstellungen(neu);
+  }
 
   // Beim Start: gibt es schon einen Tresor?
   useEffect(() => {
@@ -51,7 +68,7 @@ export default function App() {
   // Auto-Sperre: nach Inaktivität automatisch sperren (0 Minuten = aus).
   useEffect(() => {
     if (phase !== "ready") return;
-    const minuten = getAutoLockMinuten();
+    const minuten = einstellungen.autoLockMinuten;
     if (minuten <= 0) return;
 
     let timer: number | undefined;
@@ -69,7 +86,7 @@ export default function App() {
       if (timer !== undefined) window.clearTimeout(timer);
       ereignisse.forEach((e) => window.removeEventListener(e, zuruecksetzen));
     };
-  }, [phase]);
+  }, [phase, einstellungen.autoLockMinuten]);
 
   function onUnlocked(json: string) {
     try {
@@ -258,7 +275,9 @@ export default function App() {
       });
       if (!pfad) return;
       const istVcf = /\.(vcf|vcard)$/i.test(pfad);
-      const inhalt = istVcf ? toVCard(contacts) : toCsv(contacts);
+      const inhalt = istVcf
+        ? toVCard(contacts)
+        : toCsv(contacts, einstellungen.csvTrennzeichen);
       await writeTextFile(pfad, inhalt);
       window.alert(`${contacts.length} Kontakt(e) exportiert nach:\n${pfad}`);
     } catch (e) {
@@ -291,8 +310,12 @@ export default function App() {
           onChange={(e) => setSuche(e.target.value)}
         />
         <div className="topbar-aktionen">
-          <button className="btn-ghost-hell" onClick={() => setPwDialog(true)}>
-            Passwort ändern
+          <button
+            className="btn-ghost-hell"
+            onClick={() => setSettingsOffen(true)}
+            title="Einstellungen"
+          >
+            ⚙ Einstellungen
           </button>
           <button className="btn-ghost-hell" onClick={sperren}>
             Sperren
@@ -323,22 +346,6 @@ export default function App() {
             </button>
             <button className="btn-ghost klein" onClick={exportieren}>
               Exportieren
-            </button>
-          </div>
-          <div className="sidebar-io">
-            <button
-              className="btn-ghost klein"
-              onClick={sichern}
-              title="Verschlüsselte Sicherungskopie des Tresors ablegen"
-            >
-              Sichern
-            </button>
-            <button
-              className="btn-ghost klein"
-              onClick={wiederherstellen}
-              title="Eine Sicherung einspielen (ersetzt den aktuellen Tresor)"
-            >
-              Wiederherstellen
             </button>
           </div>
           <div className="sidebar-controls">
@@ -393,6 +400,7 @@ export default function App() {
           ) : ausgewaehlt ? (
             <ContactDetail
               contact={ausgewaehlt}
+              telefonGruppiert={einstellungen.telefonGruppiert}
               onEdit={bearbeiten}
               onDelete={() => loeschen(ausgewaehlt.id)}
             />
@@ -413,6 +421,23 @@ export default function App() {
           )}
         </main>
       </div>
+
+      {settingsOffen && (
+        <SettingsDialog
+          einstellungen={einstellungen}
+          onAendern={aendereEinstellungen}
+          onClose={() => setSettingsOffen(false)}
+          onPasswortAendern={() => {
+            setSettingsOffen(false);
+            setPwDialog(true);
+          }}
+          onSichern={() => void sichern()}
+          onWiederherstellen={() => {
+            setSettingsOffen(false);
+            void wiederherstellen();
+          }}
+        />
+      )}
 
       {pwDialog && (
         <PasswortDialog

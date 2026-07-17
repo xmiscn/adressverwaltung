@@ -42,8 +42,10 @@ Alle Daten liegen verschlüsselt lokal auf dem Rechner.
 - **`contactsView.ts`** – reine, getestete Sicht-Logik: Sortierung, Kategorien, nächste Geburtstage.
 - **`phone.ts`** – Telefon-Validierung/-Formatierung via `libphonenumber-js` („+"-Pflicht, Speicherung als E.164).
 - **`ioFormats.ts`** – CSV-/vCard-Umwandlung für Im-/Export.
-- **`settings.ts`** – lokale, **nicht geheime** Einstellungen (z. B. Auto-Sperre-Dauer)
-  im `localStorage`. Enthält bewusst keine Tresor-Daten.
+- **`settings.ts`** – lokale, **nicht geheime** Einstellungen im `localStorage`
+  (Auto-Sperre, Telefon-Darstellung, CSV-Trennzeichen, Standard-Sortierung).
+  Enthält bewusst keine Tresor-Daten; ungültige Werte fallen auf den Standard zurück.
+- **`components/SettingsDialog.tsx`** – Minikonfiguration (⚙): Tresor · Format · Info.
 
 Tests: reine Logik-Module (`contactsView`, `phone`) sind mit **Vitest** abgedeckt
 (`*.test.ts`), Ausführung über `npm test`.

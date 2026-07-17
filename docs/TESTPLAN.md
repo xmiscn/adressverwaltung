@@ -67,6 +67,18 @@ Vor dem Test ggf. eine bestehende `vault.json` sichern/entfernen
 - [ ] Gültige Nummer wird beim Verlassen des Feldes lesbar formatiert.
 - [ ] Import/Export nimmt Website und E-Mail 2 korrekt mit.
 
+### Einstellungen / Minikonfiguration (Sprint 4)
+- [ ] „⚙ Einstellungen" in der Kopfzeile öffnet den Dialog; Klick daneben schließt ihn.
+- [ ] **Tresor:** Speicherort wird angezeigt; „Ordner öffnen" öffnet den Explorer an der Datei.
+- [ ] **Tresor:** Auto-Sperre lässt sich umstellen; „aus" verhindert das automatische Sperren.
+- [ ] **Tresor:** „Master-Passwort ändern" öffnet den Passwort-Dialog.
+- [ ] **Tresor:** „Sichern" und „Wiederherstellen" sind von hier erreichbar.
+- [ ] **Format:** Telefon-Gruppierung aus → Detailansicht zeigt `+41446681800` statt `+41 44 668 18 00`.
+- [ ] **Format:** CSV-Trennzeichen auf Komma → Export ist kommagetrennt (und reimportierbar).
+- [ ] **Format:** Standard-Sortierung greift beim nächsten Start der App.
+- [ ] **Info:** zeigt die korrekte Version und den Passwort-Warnhinweis.
+- [ ] Alle Einstellungen bleiben nach einem Neustart erhalten.
+
 ### Sicherheit & Backup (Sprint 3)
 - [ ] „Sichern" legt eine Datei an; im Editor geöffnet ist sie **unlesbar** (nur Umschlag).
 - [ ] „Wiederherstellen" fragt vor dem Ersetzen nach und lässt sich abbrechen.

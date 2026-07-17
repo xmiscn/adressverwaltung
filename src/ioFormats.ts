@@ -76,8 +76,7 @@ function csvFeld(wert: string, delim: string): string {
   return wert;
 }
 
-export function toCsv(contacts: Contact[]): string {
-  const delim = ";";
+export function toCsv(contacts: Contact[], delim: string = ";"): string {
   const kopf = CSV_SPALTEN.map((s) => s.titel).join(delim);
   const zeilen = contacts.map((k) =>
     CSV_SPALTEN.map((s) => csvFeld(k[s.feld] ?? "", delim)).join(delim),

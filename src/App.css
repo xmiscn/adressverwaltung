@@ -599,3 +599,82 @@ button {
   gap: 8px;
   margin-top: 4px;
 }
+
+/* ---------- Einstellungen ---------- */
+
+.modal-breit {
+  max-width: 560px;
+}
+
+.einst-block {
+  border-top: 1px solid var(--rahmen);
+  padding-top: 14px;
+}
+
+.einst-block h3 {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--blau-700);
+}
+
+.einst-zeile {
+  display: grid;
+  grid-template-columns: 150px 1fr;
+  gap: 12px;
+  align-items: start;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.einst-label {
+  color: var(--text-schwach);
+  padding-top: 4px;
+}
+
+.einst-pfad {
+  font-family: Consolas, "Courier New", monospace;
+  font-size: 12px;
+  color: var(--text);
+  word-break: break-all;
+  background: var(--blau-050);
+  border: 1px solid var(--rahmen);
+  border-radius: 4px;
+  padding: 6px 8px;
+}
+
+.einst-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.einst-check input {
+  width: auto;
+}
+
+.einst-zeile select {
+  border: 1px solid var(--rahmen);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-family: inherit;
+  font-size: 13px;
+  background: var(--weiss);
+  color: var(--text);
+  justify-self: start;
+}
+
+.einst-aktionen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.einst-warnung {
+  margin: 0;
+  background: var(--rot-hell);
+  color: var(--rot);
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}

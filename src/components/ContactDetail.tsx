@@ -6,6 +6,8 @@ import { formatPhone } from "../phone";
 
 interface Props {
   contact: Contact;
+  /** Telefonnummern lesbar gruppiert (+41 44 …) statt kompakt anzeigen. */
+  telefonGruppiert: boolean;
   onEdit: () => void;
   onDelete: () => void;
 }
@@ -54,8 +56,14 @@ function websiteUrl(w: string): string {
   return /^https?:\/\//i.test(w) ? w : `https://${w}`;
 }
 
-export default function ContactDetail({ contact, onEdit, onDelete }: Props) {
+export default function ContactDetail({
+  contact,
+  telefonGruppiert,
+  onEdit,
+  onDelete,
+}: Props) {
   const k = contact;
+  const telAnzeige = (wert: string) => (telefonGruppiert ? formatPhone(wert) : wert);
   const adresseZeilen = [k.strasse, [k.plz, k.ort].filter(Boolean).join(" "), k.land]
     .filter(Boolean)
     .join("\n");
@@ -108,10 +116,10 @@ export default function ContactDetail({ contact, onEdit, onDelete }: Props) {
         <LinkZeile label="E-Mail 2" anzeige={k.email2} url={`mailto:${k.email2}`} />
         <LinkZeile
           label="Telefon"
-          anzeige={formatPhone(k.telefon)}
+          anzeige={telAnzeige(k.telefon)}
           url={`tel:${k.telefon}`}
         />
-        <LinkZeile label="Mobil" anzeige={formatPhone(k.mobil)} url={`tel:${k.mobil}`} />
+        <LinkZeile label="Mobil" anzeige={telAnzeige(k.mobil)} url={`tel:${k.mobil}`} />
         <Zeile label="Geburtstag" wert={k.geburtstag} />
 
         {k.notizen && (
