@@ -86,7 +86,48 @@ fn save_contacts(data: String, state: State<AppState>) -> Result<(), String> {
     // Validieren, dass es gueltiges JSON ist, bevor wir es verschluesseln.
     serde_json::from_str::<serde_json::Value>(&data)
         .map_err(|e| format!("Ungueltige Daten: {e}"))?;
-    vault::write_encrypted(&s.path, key, salt, &data)
+    vault::write_encrypted(&s.path, key, salt, &data)?;
+
+    // Rollierendes Auto-Backup (letzte 5). Ein Fehler hier darf das
+    // eigentliche Speichern nicht scheitern lassen.
+    if let Some(parent) = s.path.parent() {
+        let _ = vault::rotate_backups(&s.path, &parent.join("backups"), 5);
+    }
+    Ok(())
+}
+
+/// Liefert den Speicherort des Tresors (fuer Anzeige/Backup-Vorschlag).
+#[tauri::command]
+fn vault_path(state: State<AppState>) -> Result<String, String> {
+    let s = state.0.lock().map_err(|_| "Statusfehler".to_string())?;
+    Ok(s.path.to_string_lossy().to_string())
+}
+
+/// Sichert den verschluesselten Tresor an einen vom Nutzer gewaehlten Ort.
+#[tauri::command]
+fn backup_vault(ziel: String, state: State<AppState>) -> Result<(), String> {
+    let s = state.0.lock().map_err(|_| "Statusfehler".to_string())?;
+    vault::copy_to(&s.path, &PathBuf::from(ziel))
+}
+
+/// Spielt eine Sicherung ein. Prueft die Datei, sichert den aktuellen Stand
+/// vorher weg und sperrt danach die Sitzung (die Sicherung kann ein anderes
+/// Master-Passwort haben).
+#[tauri::command]
+fn restore_vault(quelle: String, state: State<AppState>) -> Result<(), String> {
+    let mut s = state.0.lock().map_err(|_| "Statusfehler".to_string())?;
+    let q = PathBuf::from(quelle);
+    if !vault::is_valid_vault_file(&q) {
+        return Err("Diese Datei ist keine gueltige ADR-Tresor-Sicherung.".into());
+    }
+    // Aktuellen Stand vor dem Ueberschreiben in die rollierende Sicherung legen.
+    if let Some(parent) = s.path.parent() {
+        let _ = vault::rotate_backups(&s.path, &parent.join("backups"), 5);
+    }
+    vault::copy_to(&q, &s.path)?;
+    s.key = None;
+    s.salt = None;
+    Ok(())
 }
 
 /// Sperrt die Sitzung: entfernt den Schluessel aus dem Speicher.
@@ -145,7 +186,10 @@ pub fn run() {
             lock_vault,
             change_password,
             read_text_file,
-            write_text_file
+            write_text_file,
+            vault_path,
+            backup_vault,
+            restore_vault
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

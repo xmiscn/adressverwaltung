@@ -42,6 +42,8 @@ Alle Daten liegen verschlüsselt lokal auf dem Rechner.
 - **`contactsView.ts`** – reine, getestete Sicht-Logik: Sortierung, Kategorien, nächste Geburtstage.
 - **`phone.ts`** – Telefon-Validierung/-Formatierung via `libphonenumber-js` („+"-Pflicht, Speicherung als E.164).
 - **`ioFormats.ts`** – CSV-/vCard-Umwandlung für Im-/Export.
+- **`settings.ts`** – lokale, **nicht geheime** Einstellungen (z. B. Auto-Sperre-Dauer)
+  im `localStorage`. Enthält bewusst keine Tresor-Daten.
 
 Tests: reine Logik-Module (`contactsView`, `phone`) sind mit **Vitest** abgedeckt
 (`*.test.ts`), Ausführung über `npm test`.
@@ -75,6 +77,19 @@ Tests: reine Logik-Module (`contactsView`, `phone`) sind mit **Vitest** abgedeck
 | Dateiformat | JSON-Umschlag: `version, kdf, salt_b64, nonce_b64, ciphertext_b64` |
 | Falsches Passwort | Entschlüsselung schlägt am GCM-Auth-Tag fehl → „Falsches Passwort" |
 | Schlüssel im RAM | nur während entsperrter Sitzung; kein Schreiben auf Platte |
+| Auto-Sperre | nach Inaktivität (Standard 10 Min) wird der Schlüssel verworfen |
+
+## Datensicherung
+
+- **Rollierendes Auto-Backup:** Bei jedem Speichern wird der Tresor nach
+  `%APPDATA%\com.adressverwaltung.app\backups\` kopiert; gehalten werden die
+  letzten **5** Stände (`vault-1.json` = neuester … `vault-5.json` = ältester).
+  Schlägt das Backup fehl, scheitert das Speichern **nicht** (Best-Effort).
+- **Manuelles Backup:** Dateikopie an einen frei gewählten Ort. Da die Datei
+  bereits verschlüsselt ist, ist die Sicherung genauso geschützt wie das Original.
+- **Wiederherstellen:** Die Datei wird zuerst als gültiger Tresor-Umschlag geprüft,
+  der aktuelle Stand wandert in die rollierende Sicherung, danach wird ersetzt und
+  die Sitzung gesperrt.
 
 **Bewusste Grenzen (Einzelplatz-Modell):**
 - Das Master-Passwort kann **nicht** zurückgesetzt werden – ohne Passwort sind die

@@ -11,10 +11,19 @@ Die einzige Nutzdatendatei ist:
 %APPDATA%\com.adressverwaltung.app\vault.json
 ```
 
-- **Regelmäßig kopieren** (z. B. wöchentlich auf einen anderen Datenträger/Cloud).
-  Die Datei ist verschlüsselt und kann bedenkenlos kopiert werden.
-- **Master-Passwort sicher verwahren.** Es gibt **keine** Wiederherstellung.
-  Geht das Passwort verloren, sind die Daten unwiederbringlich.
+**Automatisch (seit 0.4.0):** Bei jedem Speichern legt die App eine rollierende
+Sicherung der letzten **5** Stände unter
+`%APPDATA%\com.adressverwaltung.app\backups\` ab (`vault-1.json` = neuester).
+Das schützt gegen versehentliches Überschreiben – **nicht** gegen Festplattenausfall.
+
+**Manuell (empfohlen, zusätzlich):**
+- In der App auf **„Sichern"** klicken und die Datei auf einen **anderen
+  Datenträger / in die Cloud** legen (z. B. wöchentlich). Die Sicherung ist
+  verschlüsselt und kann bedenkenlos abgelegt werden.
+- Einspielen über **„Wiederherstellen"**; danach ist das Passwort der Sicherung nötig.
+
+**Master-Passwort sicher verwahren.** Es gibt **keine** Wiederherstellung.
+Geht das Passwort verloren, sind die Daten unwiederbringlich – auch aus jedem Backup.
 
 ## Abhängigkeiten aktuell halten
 Empfehlung: quartalsweise prüfen.
@@ -68,3 +77,4 @@ winget upgrade OpenJS.NodeJS.LTS
 | 0.1.0 | 2026-07-15 | Erstversion: verschlüsselte Kontaktverwaltung |
 | 0.2.0 | 2026-07-15 | Import/Export (CSV/vCard), eigenes App-Icon, Code-Signing-Anleitung |
 | 0.3.0 | 2026-07-16 | Umbenennung ADR-Tresor; Sortieren/Gruppieren/Kategorie-Filter; nächste Geburtstage; Website + 2. E-Mail; klickbare Aktionen; Telefon-Pflichtformat; Übersicht-Button |
+| 0.4.0 | 2026-07-16 | Auto-Sperre bei Inaktivität; manuelles Sichern/Wiederherstellen; rollierendes Auto-Backup (letzte 5) |

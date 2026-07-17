@@ -137,6 +137,56 @@ pub fn write_encrypted(
     Ok(())
 }
 
+/// Prueft, ob eine Datei ein gueltiger Tresor-Umschlag ist (ohne Passwort).
+/// Dient als Sicherung gegen das Einspielen fremder/kaputter Dateien.
+pub fn is_valid_vault_file(path: &PathBuf) -> bool {
+    match std::fs::read_to_string(path) {
+        Ok(raw) => serde_json::from_str::<Envelope>(&raw).is_ok(),
+        Err(_) => false,
+    }
+}
+
+/// Kopiert den (bereits verschluesselten) Tresor an ein Ziel.
+pub fn copy_to(quelle: &PathBuf, ziel: &PathBuf) -> Result<(), String> {
+    if !quelle.exists() {
+        return Err("Es existiert noch kein Tresor zum Sichern.".into());
+    }
+    if let Some(parent) = ziel.parent() {
+        std::fs::create_dir_all(parent)
+            .map_err(|e| format!("Zielordner konnte nicht angelegt werden: {e}"))?;
+    }
+    std::fs::copy(quelle, ziel).map_err(|e| format!("Sichern fehlgeschlagen: {e}"))?;
+    Ok(())
+}
+
+/// Rollierende Sicherung: haelt die letzten `keep` Staende.
+/// vault-1.json ist die neueste, vault-{keep}.json die aelteste.
+pub fn rotate_backups(vault: &PathBuf, dir: &PathBuf, keep: usize) -> Result<(), String> {
+    if !vault.exists() || keep == 0 {
+        return Ok(());
+    }
+    std::fs::create_dir_all(dir)
+        .map_err(|e| format!("Backup-Ordner konnte nicht angelegt werden: {e}"))?;
+
+    let pfad = |i: usize| dir.join(format!("vault-{i}.json"));
+
+    // Aeltesten Stand entfernen ...
+    let aeltester = pfad(keep);
+    if aeltester.exists() {
+        let _ = std::fs::remove_file(&aeltester);
+    }
+    // ... dann alle um eins nach hinten schieben (keep-1 -> keep, ..., 1 -> 2).
+    for i in (1..keep).rev() {
+        let von = pfad(i);
+        if von.exists() {
+            let _ = std::fs::rename(&von, pfad(i + 1));
+        }
+    }
+    // Aktuellen Stand als neueste Sicherung ablegen.
+    std::fs::copy(vault, pfad(1)).map_err(|e| format!("Auto-Backup fehlgeschlagen: {e}"))?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -198,5 +248,85 @@ mod tests {
         assert!(roh.contains("ciphertext_b64"));
 
         std::fs::remove_file(&path).unwrap();
+    }
+
+    fn temp_dir_neu(name: &str) -> PathBuf {
+        let dir = env::temp_dir().join(format!("adressverwaltung_test_{name}"));
+        let _ = std::fs::remove_dir_all(&dir);
+        std::fs::create_dir_all(&dir).unwrap();
+        dir
+    }
+
+    #[test]
+    fn backup_ist_gueltig_und_entsperrbar() {
+        let dir = temp_dir_neu("backup");
+        let vault = dir.join("vault.json");
+        let ziel = dir.join("sicherung.json");
+
+        let daten = r#"[{"nachname":"Sicher"}]"#;
+        initialize(&vault, "pw12", daten).unwrap();
+        copy_to(&vault, &ziel).unwrap();
+
+        assert!(is_valid_vault_file(&ziel));
+        // Die Sicherung laesst sich mit demselben Passwort entsperren ...
+        let (json, _, _) = unlock(&ziel, "pw12").unwrap();
+        assert_eq!(json, daten);
+        // ... und bleibt gegen falsche Passwoerter geschuetzt.
+        assert!(unlock(&ziel, "falsch").is_err());
+
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn sichern_ohne_tresor_schlaegt_fehl() {
+        let dir = temp_dir_neu("backup_leer");
+        let fehlt = dir.join("gibtsnicht.json");
+        assert!(copy_to(&fehlt, &dir.join("ziel.json")).is_err());
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn fremde_datei_wird_als_ungueltig_erkannt() {
+        let dir = temp_dir_neu("valid");
+        let muell = dir.join("muell.json");
+        std::fs::write(&muell, "kein tresor").unwrap();
+        assert!(!is_valid_vault_file(&muell));
+
+        let vault = dir.join("vault.json");
+        initialize(&vault, "pw12", "[]").unwrap();
+        assert!(is_valid_vault_file(&vault));
+
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn rotation_haelt_die_letzten_fuenf_staende() {
+        let dir = temp_dir_neu("rotation");
+        let vault = dir.join("vault.json");
+        let backups = dir.join("backups");
+
+        // Sieben Speichervorgaenge simulieren.
+        for n in 1..=7 {
+            let daten = format!(r#"[{{"nachname":"Stand{n}"}}]"#);
+            initialize(&vault, "pw12", &daten).unwrap();
+            rotate_backups(&vault, &backups, 5).unwrap();
+        }
+
+        // Genau fuenf Sicherungen, keine sechste.
+        for i in 1..=5 {
+            assert!(
+                backups.join(format!("vault-{i}.json")).exists(),
+                "vault-{i}.json fehlt"
+            );
+        }
+        assert!(!backups.join("vault-6.json").exists());
+
+        // vault-1 ist der neueste Stand (7), vault-5 der aelteste gehaltene (3).
+        let (neueste, _, _) = unlock(&backups.join("vault-1.json"), "pw12").unwrap();
+        assert!(neueste.contains("Stand7"), "vault-1 war: {neueste}");
+        let (aelteste, _, _) = unlock(&backups.join("vault-5.json"), "pw12").unwrap();
+        assert!(aelteste.contains("Stand3"), "vault-5 war: {aelteste}");
+
+        std::fs::remove_dir_all(&dir).unwrap();
     }
 }

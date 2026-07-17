@@ -9,7 +9,10 @@ import {
   changePassword,
   readTextFile,
   writeTextFile,
+  backupVault,
+  restoreVault,
 } from "./api";
+import { getAutoLockMinuten } from "./settings";
 import { toCsv, fromCsv, toVCard, fromVCard } from "./ioFormats";
 import {
   sortContacts,
@@ -44,6 +47,29 @@ export default function App() {
       .then((s) => setPhase(s.initialized ? "unlock" : "setup"))
       .catch((e) => setFehler(String(e)));
   }, []);
+
+  // Auto-Sperre: nach Inaktivität automatisch sperren (0 Minuten = aus).
+  useEffect(() => {
+    if (phase !== "ready") return;
+    const minuten = getAutoLockMinuten();
+    if (minuten <= 0) return;
+
+    let timer: number | undefined;
+    const zuruecksetzen = () => {
+      if (timer !== undefined) window.clearTimeout(timer);
+      timer = window.setTimeout(() => void sperren(), minuten * 60_000);
+    };
+    const ereignisse = ["mousemove", "mousedown", "keydown", "wheel", "touchstart"];
+    ereignisse.forEach((e) =>
+      window.addEventListener(e, zuruecksetzen, { passive: true }),
+    );
+    zuruecksetzen();
+
+    return () => {
+      if (timer !== undefined) window.clearTimeout(timer);
+      ereignisse.forEach((e) => window.removeEventListener(e, zuruecksetzen));
+    };
+  }, [phase]);
 
   function onUnlocked(json: string) {
     try {
@@ -133,6 +159,51 @@ export default function App() {
     setEntwurf(null);
     setSuche("");
     setPhase("unlock");
+  }
+
+  async function sichern() {
+    try {
+      const pfad = await save({
+        defaultPath: "adr-tresor-sicherung.json",
+        filters: [{ name: "ADR-Tresor Sicherung", extensions: ["json"] }],
+      });
+      if (!pfad) return;
+      await backupVault(pfad);
+      window.alert("Sicherung erstellt:\n" + pfad);
+    } catch (e) {
+      setFehler("Sichern fehlgeschlagen: " + String(e));
+    }
+  }
+
+  async function wiederherstellen() {
+    try {
+      const pfad = await open({
+        multiple: false,
+        directory: false,
+        filters: [{ name: "ADR-Tresor Sicherung", extensions: ["json"] }],
+      });
+      if (!pfad || typeof pfad !== "string") return;
+
+      const ok = window.confirm(
+        "Achtung: Der aktuelle Tresor wird durch die Sicherung ersetzt.\n\n" +
+          "Der bisherige Stand wird vorher automatisch in die rollierende Sicherung gelegt.\n" +
+          "Nach dem Einspielen ist das Passwort der Sicherung nötig.\n\nFortfahren?",
+      );
+      if (!ok) return;
+
+      await restoreVault(pfad);
+      // Das Backend hat die Sitzung gesperrt – Oberfläche zurücksetzen.
+      setContacts([]);
+      setSelectedId(null);
+      setEditMode("none");
+      setEntwurf(null);
+      setSuche("");
+      setFehler("");
+      setPhase("unlock");
+      window.alert("Sicherung eingespielt. Bitte mit dem zugehörigen Passwort entsperren.");
+    } catch (e) {
+      setFehler("Wiederherstellen fehlgeschlagen: " + String(e));
+    }
   }
 
   async function importieren() {
@@ -239,6 +310,22 @@ export default function App() {
             </button>
             <button className="btn-ghost klein" onClick={exportieren}>
               Exportieren
+            </button>
+          </div>
+          <div className="sidebar-io">
+            <button
+              className="btn-ghost klein"
+              onClick={sichern}
+              title="Verschlüsselte Sicherungskopie des Tresors ablegen"
+            >
+              Sichern
+            </button>
+            <button
+              className="btn-ghost klein"
+              onClick={wiederherstellen}
+              title="Eine Sicherung einspielen (ersetzt den aktuellen Tresor)"
+            >
+              Wiederherstellen
             </button>
           </div>
           <div className="sidebar-controls">

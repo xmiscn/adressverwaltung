@@ -64,6 +64,27 @@ Schreibt Text in eine Datei. Der Pfad stammt aus dem Datei-Dialog (Export CSV/vC
 - **Argumente:** `path: string`, `content: string`
 - **Rückgabe:** – (Erfolg) / `Err` bei Schreibfehler
 
+## `vault_path`
+Liefert den Speicherort des Tresors (zur Anzeige / als Backup-Vorschlag).
+
+- **Argumente:** –
+- **Rückgabe:** `string` – vollständiger Pfad zu `vault.json`
+
+## `backup_vault`
+Sichert den **verschlüsselten** Tresor an einen gewählten Ort (reine Dateikopie –
+die Sicherung ist genauso geschützt wie das Original).
+
+- **Argumente:** `ziel: string`
+- **Rückgabe:** – (Erfolg) / `Err` wenn kein Tresor existiert oder das Schreiben scheitert
+
+## `restore_vault`
+Spielt eine Sicherung ein. Prüft zuerst, ob die Datei ein gültiger Tresor-Umschlag ist,
+legt den **aktuellen Stand vorher in die rollierende Sicherung**, überschreibt dann
+`vault.json` und **sperrt die Sitzung** (die Sicherung kann ein anderes Passwort haben).
+
+- **Argumente:** `quelle: string`
+- **Rückgabe:** – (Erfolg) / `Err` bei ungültiger Datei oder Kopierfehler
+
 > Im-/Export selbst (Formatumwandlung) findet im Frontend statt
 > ([`src/ioFormats.ts`](../src/ioFormats.ts)); der Datei-Dialog kommt vom
 > Plugin `@tauri-apps/plugin-dialog`.

@@ -44,3 +44,18 @@ export function readTextFile(path: string): Promise<string> {
 export function writeTextFile(path: string, content: string): Promise<void> {
   return invoke<void>("write_text_file", { path, content });
 }
+
+/** Speicherort des Tresors (zur Anzeige). */
+export function vaultPath(): Promise<string> {
+  return invoke<string>("vault_path");
+}
+
+/** Sichert den verschlüsselten Tresor an den gewählten Ort. */
+export function backupVault(ziel: string): Promise<void> {
+  return invoke<void>("backup_vault", { ziel });
+}
+
+/** Spielt eine Sicherung ein; die Sitzung wird danach gesperrt. */
+export function restoreVault(quelle: string): Promise<void> {
+  return invoke<void>("restore_vault", { quelle });
+}

@@ -67,6 +67,16 @@ Vor dem Test ggf. eine bestehende `vault.json` sichern/entfernen
 - [ ] Gültige Nummer wird beim Verlassen des Feldes lesbar formatiert.
 - [ ] Import/Export nimmt Website und E-Mail 2 korrekt mit.
 
+### Sicherheit & Backup (Sprint 3)
+- [ ] „Sichern" legt eine Datei an; im Editor geöffnet ist sie **unlesbar** (nur Umschlag).
+- [ ] „Wiederherstellen" fragt vor dem Ersetzen nach und lässt sich abbrechen.
+- [ ] „Wiederherstellen" mit einer beliebigen fremden JSON-Datei wird abgelehnt.
+- [ ] Nach dem Einspielen erscheint der Sperrbildschirm; nur das Passwort **der Sicherung** entsperrt.
+- [ ] Nach mehreren Speichervorgängen liegen in `%APPDATA%\com.adressverwaltung.app\backups\`
+      höchstens 5 Dateien (`vault-1.json` … `vault-5.json`), `vault-1` ist der neueste Stand.
+- [ ] Auto-Sperre: nach der eingestellten Zeit ohne Eingabe erscheint der Sperrbildschirm.
+- [ ] Bei laufender Maus-/Tastatur-Aktivität sperrt die App **nicht**.
+
 ### Import / Export
 - [ ] „Exportieren" → Dateiname `adressen.csv` → Datei enthält alle Kontakte (in Excel prüfbar, Umlaute korrekt).
 - [ ] „Exportieren" mit Endung `.vcf` → gültige vCard-Datei (in Kontakte-App/Outlook importierbar).
