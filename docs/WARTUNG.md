@@ -79,3 +79,4 @@ winget upgrade OpenJS.NodeJS.LTS
 | 0.3.0 | 2026-07-16 | Umbenennung ADR-Tresor; Sortieren/Gruppieren/Kategorie-Filter; nächste Geburtstage; Website + 2. E-Mail; klickbare Aktionen; Telefon-Pflichtformat; Übersicht-Button |
 | 0.4.0 | 2026-07-16 | Auto-Sperre bei Inaktivität; manuelles Sichern/Wiederherstellen; rollierendes Auto-Backup (letzte 5); selbsterklärender Hinweis in der Tresordatei; Warnung vor unverschlüsseltem Export |
 | 0.5.0 | 2026-07-16 | Minikonfiguration (⚙): Tresor (Speicherort, Passwort, Sichern/Wiederherstellen, Auto-Sperre), Format (Telefon-Gruppierung, CSV-Trennzeichen, Standard-Sortierung), Info |
+| **1.0.0** | **2026-07-16** | **Erste Produktionsversion.** Funktionsumfang aus 0.1.0–0.5.0 vollständig, getestet (38 automatisierte Tests) und dokumentiert. Bekannte Einschränkung: nicht code-signiert (Windows zeigt „unbekannter Herausgeber", siehe [CODE-SIGNING.md](CODE-SIGNING.md)) |
