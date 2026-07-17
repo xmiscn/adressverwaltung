@@ -235,6 +235,19 @@ export default function App() {
       setFehler("Es gibt keine Kontakte zum Exportieren.");
       return;
     }
+
+    // Der Export ist bewusst Klartext (Excel/Outlook müssen ihn lesen können).
+    // Deshalb hier deutlich warnen, damit er nicht als Sicherung missverstanden wird.
+    const weiter = window.confirm(
+      "Achtung: Die Exportdatei ist UNVERSCHLÜSSELT.\n\n" +
+        "Jede Person mit Zugriff auf die Datei kann alle Adressen im Klartext lesen.\n" +
+        "Der Export ist zum Weiterverarbeiten gedacht (Excel, Outlook), " +
+        "NICHT als Sicherung.\n\n" +
+        "Für eine geschützte Sicherung bitte 'Sichern' verwenden.\n\n" +
+        "Export trotzdem fortsetzen?",
+    );
+    if (!weiter) return;
+
     try {
       const pfad = await save({
         defaultPath: "adressen.csv",

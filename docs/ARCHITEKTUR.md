@@ -74,7 +74,7 @@ Tests: reine Logik-Module (`contactsView`, `phone`) sind mit **Vitest** abgedeck
 | Schlüsselableitung | **Argon2id** (Standardparameter der `argon2`-Crate) aus Passwort + 16-Byte-Salt |
 | Verschlüsselung | **AES-256-GCM** (authentifiziert), 12-Byte-Nonce, neu pro Speichervorgang |
 | Speicherort | `%APPDATA%\com.adressverwaltung.app\vault.json` |
-| Dateiformat | JSON-Umschlag: `version, kdf, salt_b64, nonce_b64, ciphertext_b64` |
+| Dateiformat | JSON-Umschlag: `hinweis, version, kdf, salt_b64, nonce_b64, ciphertext_b64` |
 | Falsches Passwort | Entschlüsselung schlägt am GCM-Auth-Tag fehl → „Falsches Passwort" |
 | Schlüssel im RAM | nur während entsperrter Sitzung; kein Schreiben auf Platte |
 | Auto-Sperre | nach Inaktivität (Standard 10 Min) wird der Schlüssel verworfen |
@@ -90,6 +90,18 @@ Tests: reine Logik-Module (`contactsView`, `phone`) sind mit **Vitest** abgedeck
 - **Wiederherstellen:** Die Datei wird zuerst als gültiger Tresor-Umschlag geprüft,
   der aktuelle Stand wandert in die rollierende Sicherung, danach wird ersetzt und
   die Sitzung gesperrt.
+
+**Warum die Datei „offen" aussieht:** Der Umschlag ist absichtlich lesbares JSON –
+`salt` und `nonce` sind technisch nötig, um überhaupt entschlüsseln zu können, und
+sind nicht geheim. Die eigentlichen Adressdaten stecken ausschließlich verschlüsselt
+in `ciphertext_b64`. Damit das beim Öffnen der Datei niemanden verunsichert, steht ein
+erklärender `hinweis` als erstes Feld darin. Das Feld ist rein informativ und wird beim
+Lesen ignoriert; ältere Dateien ohne dieses Feld bleiben gültig (per Test abgesichert).
+
+**Klartext gibt es nur beim Export:** `Exportieren` (CSV/vCard) schreibt bewusst
+unverschlüsselt, weil Excel/Outlook die Datei lesen müssen. Vor dem Export warnt die
+App deutlich, dass die Datei ungeschützt ist und **nicht** als Sicherung taugt –
+dafür ist `Sichern` da.
 
 **Bewusste Grenzen (Einzelplatz-Modell):**
 - Das Master-Passwort kann **nicht** zurückgesetzt werden – ohne Passwort sind die

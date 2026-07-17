@@ -20,9 +20,19 @@ const SALT_LEN: usize = 16;
 const NONCE_LEN: usize = 12;
 const KEY_LEN: usize = 32;
 
+/// Hinweistext in der Datei: macht beim Oeffnen sofort klar, dass der Inhalt
+/// verschluesselt ist und die lesbaren Felder nur technische Metadaten sind.
+const HINWEIS: &str = "ADR-Tresor: Die Adressdaten in 'ciphertext_b64' sind mit AES-256-GCM \
+verschluesselt (Schluessel via Argon2id aus dem Master-Passwort). Ohne das Master-Passwort \
+ist der Inhalt nicht lesbar. 'salt_b64' und 'nonce_b64' sind technisch notwendige, \
+nicht geheime Parameter. Diese Datei ist eine gueltige Sicherung.";
+
 /// Auf der Platte gespeicherter Umschlag (Klartext-Metadaten + Chiffretext).
 #[derive(Serialize, Deserialize)]
 struct Envelope {
+    /// Rein informativ; wird beim Lesen ignoriert (aeltere Dateien haben es nicht).
+    #[serde(default)]
+    hinweis: String,
     version: u32,
     kdf: String,
     salt_b64: String,
@@ -116,6 +126,7 @@ pub fn write_encrypted(
         .map_err(|e| format!("Verschluesselung fehlgeschlagen: {e}"))?;
 
     let env = Envelope {
+        hinweis: HINWEIS.into(),
         version: 1,
         kdf: "argon2id".into(),
         salt_b64: B64.encode(salt),
@@ -326,6 +337,39 @@ mod tests {
         assert!(neueste.contains("Stand7"), "vault-1 war: {neueste}");
         let (aelteste, _, _) = unlock(&backups.join("vault-5.json"), "pw12").unwrap();
         assert!(aelteste.contains("Stand3"), "vault-5 war: {aelteste}");
+
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn datei_ohne_hinweisfeld_bleibt_lesbar() {
+        // Bestehende Tresore aus aelteren Versionen haben das Feld nicht.
+        let dir = temp_dir_neu("kompat");
+        let vault = dir.join("vault.json");
+        initialize(&vault, "pw12", r#"[{"nachname":"Alt"}]"#).unwrap();
+
+        // Feld entfernen, als kaeme die Datei aus einer aelteren Version.
+        let roh = std::fs::read_to_string(&vault).unwrap();
+        let mut v: serde_json::Value = serde_json::from_str(&roh).unwrap();
+        v.as_object_mut().unwrap().remove("hinweis");
+        std::fs::write(&vault, serde_json::to_string_pretty(&v).unwrap()).unwrap();
+
+        let (json, _, _) = unlock(&vault, "pw12").unwrap();
+        assert!(json.contains("Alt"));
+        assert!(is_valid_vault_file(&vault));
+
+        std::fs::remove_dir_all(&dir).unwrap();
+    }
+
+    #[test]
+    fn neue_datei_enthaelt_erklaerenden_hinweis() {
+        let dir = temp_dir_neu("hinweis");
+        let vault = dir.join("vault.json");
+        initialize(&vault, "pw12", r#"[{"nachname":"Test"}]"#).unwrap();
+
+        let roh = std::fs::read_to_string(&vault).unwrap();
+        assert!(roh.contains("verschluesselt"), "Hinweis fehlt in der Datei");
+        assert!(roh.contains("AES-256-GCM"));
 
         std::fs::remove_dir_all(&dir).unwrap();
     }
